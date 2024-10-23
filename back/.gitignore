@@ -1,0 +1,10 @@
+# Ignorar la carpeta de Symfony
+var/
+vendor/
+.env
+.env.local
+.env.*.local
+
+# Ignorar archivos de configuración de IDEs
+/.idea/
+/.vscode

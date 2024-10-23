@@ -1,0 +1,9 @@
+# Ignorar la carpeta de Node.js
+node_modules/
+.nuxt/
+dist/
+.nuxtignore
+
+# Ignorar archivos de configuración de IDEs
+/.idea/
+/.vscode/
