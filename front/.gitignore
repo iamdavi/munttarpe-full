@@ -1,9 +1,24 @@
-# Ignorar la carpeta de Node.js
-node_modules/
-.nuxt/
-dist/
-.nuxtignore
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
 
-# Ignorar archivos de configuración de IDEs
-/.idea/
-/.vscode/
+# Node dependencies
+node_modules
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+
+# Local env files
+.env
+.env.*
+!.env.example
