@@ -9,22 +9,35 @@ security:
       entity:
         class: App\Entity\User
         property: email
+
   firewalls:
     dev:
       pattern: ^/(_(profiler|wdt)|css|images|js)/
       security: false
+
     main:
       lazy: true
       provider: app_user_provider
+
+    login:
+      pattern: ^/api/auth/login
+      stateless: true
+      json_login:
+        check_path: /api/auth/login
+        username_path: email
+        password_path: password
+        success_handler: lexik_jwt_authentication.handler.authentication_success
+        failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
     api:
       pattern: ^/api
       stateless: true
       jwt: ~
+      provider: app_user_provider
 
   access_control:
-    - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-    - { path: ^/api, roles: ROLE_USER }
+    - { path: ^/api/auth, roles: PUBLIC_ACCESS }
+    - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
   security:
