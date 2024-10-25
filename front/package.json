@@ -18,7 +18,10 @@
     "vue-router": "latest"
   },
   "devDependencies": {
+    "@nuxt/types": "^2.18.1",
+    "@nuxt/typescript-build": "^3.0.2",
     "@pinia/nuxt": "^0.5.5",
-    "pinia": "^2.2.4"
+    "pinia": "^2.2.4",
+    "typescript": "^5.6.3"
   }
 }

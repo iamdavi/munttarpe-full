@@ -11,10 +11,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class UserController extends AbstractController
 {
     #[Route('/me', name: 'api_me', methods: ['GET'])]
-    public function me(User $user): JsonResponse
+    public function me(): JsonResponse
     {
-        return new JsonResponse([
-            'email' => $user->getEmail(),
-        ]);
+        /** @var User */
+        $user = $this->getUser();
+        $data = $user->serialize();
+        dump($data);
+        return new JsonResponse($data);
     }
 }

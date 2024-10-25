@@ -11,6 +11,7 @@ export const useAuthStore = defineStore("auth", {
     authenticated: false,
     token: "",
     loading: false,
+    user: null,
   }),
   actions: {
     async authenticateUser({ email, password }: UserPayloadInterface) {
@@ -23,7 +24,6 @@ export const useAuthStore = defineStore("auth", {
         token.value = res.token; // set token to cookie
         this.token = res.token;
         this.authenticated = true; // set authenticated  state value to true
-        console.log(this.authenticated, this.token);
       }
     },
     async registerUser({ email, password }: UserPayloadInterface) {
@@ -36,6 +36,10 @@ export const useAuthStore = defineStore("auth", {
         this.authenticateUser({ email, password });
       }
       // @TODO => Usar el msg
+    },
+    async getUserData() {
+      const res: any = await $api("/user/me");
+      console.log(res);
     },
     logUserOut() {
       const token = useCookie("token"); // useCookie new hook in nuxt 3

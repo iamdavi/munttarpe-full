@@ -105,4 +105,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
+
+    public function serialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'email' => $this->getEmail(),
+            'roles' => $this->getRoles()
+        ];
+    }
 }

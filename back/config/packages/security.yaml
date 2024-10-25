@@ -22,14 +22,11 @@ security:
         check_path: /api/auth/login
         username_path: email
         password_path: password
-        # success_handler: lexik_jwt_authentication.handler.authentication_success
-        # failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
     api:
       pattern: ^/api
       stateless: true
-      # jwt: ~
-      # entry_point: Lexik\Bundle\JWTAuthenticationBundle\Security\Http\EntryPoint\JWTAuthenticationEntryPoint
+      jwt: ~
 
   access_control:
     - { path: ^/api/auth/login, roles: PUBLIC_ACCESS }
