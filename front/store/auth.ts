@@ -1,38 +1,41 @@
 import { defineStore } from "pinia";
 
 import type { UserPayloadInterface } from "~/interfaces/user";
+import type {
+  AuthResponse,
+  AuthResponseMsg,
+} from "~/interfaces/authInterfaces";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     authenticated: false,
-    accessToken: "",
+    token: "",
     loading: false,
   }),
   actions: {
     async authenticateUser({ email, password }: UserPayloadInterface) {
-      const { data, pending }: any = await $api("/auth/login", {
+      const res: AuthResponse = await $api("/auth/login", {
         method: "post",
         body: { email, password },
       });
-      this.loading = pending;
-
-      if (data.value) {
+      if (res.status == "success") {
         const token = useCookie("token"); // useCookie new hook in nuxt 3
-        token.value = data?.value?.token; // set token to cookie
-        this.accessToken = data?.value?.token;
+        token.value = res.token; // set token to cookie
+        this.token = res.token;
         this.authenticated = true; // set authenticated  state value to true
+        console.log(this.authenticated, this.token);
       }
     },
     async registerUser({ email, password }: UserPayloadInterface) {
-      const { data, pending }: any = await $api("/auth/register", {
+      const { status, msg }: AuthResponseMsg = await $api("/auth/register", {
         method: "post",
         body: { email, password },
       });
-      this.loading = pending;
 
-      if (data.value) {
+      if (status == "success") {
         this.authenticateUser({ email, password });
       }
+      // @TODO => Usar el msg
     },
     logUserOut() {
       const token = useCookie("token"); // useCookie new hook in nuxt 3

@@ -12,7 +12,7 @@ export function $api<T>(
     baseURL: config.public.baseURL,
     headers: {
       "Content-Type": "application/json",
-      Authorization: auth.authenticated ? `Bearer ${auth.accessToken}` : "",
+      Authorization: auth.authenticated ? `Bearer ${auth.token}` : "",
       ...opts?.headers,
     },
   });
