@@ -6,46 +6,96 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('/api/auth')]
 class AuthController extends AbstractController
 {
     private EntityManagerInterface $em;
+    private UserPasswordHasherInterface  $passHash;
 
-    private function __construct(EntityManagerInterface $em)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passHash
+    ) {
         $this->em = $em;
+        $this->passHash = $passHash;
     }
 
-    #[Route('/register', name: 'api_register', methods: ['POST', 'GET'])]
-    public function registerAction(Request $request, UserPasswordEncoderInterface $encoder): JsonResponse
+    #[Route('/register', name: 'api_auth_register', methods: ['POST', 'GET'])]
+    public function register(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-
-        if (!isset($data['email']) || !isset($data['password'])) {
-            return new JsonResponse(['error' => 'Email y contraseña son requeridos.'], Response::HTTP_BAD_REQUEST);
+        list($email, $password) = $this->getEmailPassFromRequest($request);
+        if ($email == false) {
+            return new JsonResponse(
+                [
+                    'status' => 'error',
+                    'msg' => 'Email y contraseña son requeridos.'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         $user = new User();
-        $user->setEmail($data['email']);
-        $user->setPassword($encoder->encodePassword($user, $data['password']));
+        $user->setEmail($email);
+        $user->setPassword($this->passHash->hashPassword($user, $password));
 
         // Persistir el usuario
         $this->em->persist($user);
         $this->em->flush();
 
-        return new JsonResponse(['message' => 'Usuario registrado con éxito.'], Response::HTTP_CREATED);
+        return new JsonResponse(
+            [
+                "status" => 'success',
+                'msg' => 'Usuario registrado con éxito.'
+            ],
+            Response::HTTP_CREATED
+        );
     }
 
-    #[Route('/login', name: 'api_login', methods: ['POST', 'GET'])]
-    public function loginAction(UserInterface $user): JsonResponse
-    {
+    #[Route('/login', name: 'api_auth_login', methods: ['POST', 'GET'])]
+    public function loginAction(
+        Request $request,
+        JWTTokenManagerInterface $JWTManager
+    ): JsonResponse {
+        list($email, $password) = $this->getEmailPassFromRequest($request);
+        if ($email == false) {
+            return new JsonResponse(
+                [
+                    'status' => 'error',
+                    'msg' => 'Email y contraseña son requeridos.'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        $user = $this->em->getRepository(User::class)->findOneBy(['email' => $email]);
+        if (!$this->passHash->isPasswordValid($user, $password, null)) {
+            return new JsonResponse(
+                [
+                    'status' => 'error',
+                    'msg' => 'Credenciales inválidas'
+                ],
+                Response::HTTP_UNAUTHORIZED
+            );
+        }
+
         // Este controlador será manejado automáticamente por el sistema de seguridad
-        return new JsonResponse(['message' => 'Login successful'], JsonResponse::HTTP_OK);
+        return new JsonResponse([
+            "status" => 'success',
+            "token" => $JWTManager->create($user)
+        ], JsonResponse::HTTP_OK);
+    }
+
+    private function getEmailPassFromRequest(Request $request)
+    {
+        $data = json_decode($request->getContent(), true);
+        return (isset($data['email']) && isset($data['password']))
+            ? [$data['email'], $data['password']]
+            : [false, false];
     }
 }
