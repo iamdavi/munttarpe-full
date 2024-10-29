@@ -16,7 +16,6 @@ class UserController extends AbstractController
         /** @var User */
         $user = $this->getUser();
         $data = $user->serialize();
-        dump($data);
         return new JsonResponse($data);
     }
 }

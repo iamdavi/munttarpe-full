@@ -1,10 +1,11 @@
 import { useAuthStore } from "@/store/auth";
 
 export default defineNuxtRouteMiddleware((to, from) => {
-  const { authenticated } = storeToRefs(useAuthStore());
-  const token = useCookie("token");
-  if (token.value) {
-    authenticated.value = true; // update the state to authenticated
+  const { authenticated, token } = storeToRefs(useAuthStore());
+  const cookieToken = useCookie("token");
+  if (cookieToken.value) {
+    authenticated.value = true;
+    token.value = cookieToken.value;
   }
   const publicRoutes = ["/login", "/register", "/"];
   if (!authenticated && !publicRoutes.includes(to.path)) {
