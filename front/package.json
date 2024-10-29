@@ -13,6 +13,7 @@
     "vue": "latest"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "nuxt": "^3.13.2",
     "vue": "latest",
     "vue-router": "latest"
@@ -22,6 +23,8 @@
     "@nuxt/typescript-build": "^3.0.2",
     "@pinia/nuxt": "^0.5.5",
     "pinia": "^2.2.4",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vite-plugin-vuetify": "^2.0.4",
+    "vuetify": "^3.7.3"
   }
 }
