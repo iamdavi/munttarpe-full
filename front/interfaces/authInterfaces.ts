@@ -1,6 +1,7 @@
 export interface AuthResponseToken {
   status: "success" | "error";
   token: string;
+  refreshToken: string;
 }
 
 export interface AuthResponseMsg {

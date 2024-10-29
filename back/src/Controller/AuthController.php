@@ -84,11 +84,36 @@ class AuthController extends AbstractController
             );
         }
 
+        $token = $JWTManager->create($user);
+        $refreshToken = bin2hex(random_bytes(32));
+
+        $user->setRefreshToken($refreshToken);
+        $this->em->persist($user);
+        $this->em->flush();
+
         // Este controlador será manejado automáticamente por el sistema de seguridad
         return new JsonResponse([
             "status" => 'success',
-            "token" => $JWTManager->create($user)
+            "token" => $token,
+            "refreshToken" => $refreshToken
         ], JsonResponse::HTTP_OK);
+    }
+
+    #[Route('/refresh', name: 'api_auth_refresh', methods: ['POST', 'GET'])]
+    public function refreshAction(
+        Request $request,
+        JWTTokenManagerInterface $JWTManager
+    ): JsonResponse {
+        $refreshToken = $request->request->get('refreshToken');
+
+        $user = $this->em->getRepository(User::class)->findOneBy(['refreshToken' => $refreshToken]);
+        if (!$user) {
+            return new JsonResponse(['message' => 'Invalid refresh token'], 401);
+        }
+
+        $newToken = $JWTManager->create($user);
+
+        return new JsonResponse(['token' => $newToken]);
     }
 
     private function getEmailPassFromRequest(Request $request)

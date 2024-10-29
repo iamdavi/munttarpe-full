@@ -10,6 +10,7 @@ export const useAuthStore = defineStore("auth", {
   state: () => ({
     authenticated: false,
     token: "",
+    refreshToken: "",
     loading: false,
     user: null,
   }),
@@ -23,6 +24,7 @@ export const useAuthStore = defineStore("auth", {
         const token = useCookie("token"); // useCookie new hook in nuxt 3
         token.value = res.token; // set token to cookie
         this.token = res.token;
+        this.refreshToken = res.refreshToken;
         this.authenticated = true; // set authenticated  state value to true
       }
     },
@@ -43,8 +45,13 @@ export const useAuthStore = defineStore("auth", {
     },
     logUserOut() {
       const token = useCookie("token"); // useCookie new hook in nuxt 3
+      token.value = ""; // clear the token cookie
       this.authenticated = false; // set authenticated  state value to false
-      token.value = null; // clear the token cookie
+      this.token = "";
+      this.refreshToken = "";
+    },
+    setToken(token: string) {
+      this.token = token;
     },
   },
 });

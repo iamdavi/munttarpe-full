@@ -19,6 +19,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
+    #[ORM\Column(length: 64)]
+    private ?string $refreshToken = null;
+
     /**
      * @var list<string> The user roles
      */
@@ -113,5 +116,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'email' => $this->getEmail(),
             'roles' => $this->getRoles()
         ];
+    }
+
+    public function getRefreshToken(): ?string
+    {
+        return $this->refreshToken;
+    }
+
+    public function setRefreshToken(string $refreshToken): static
+    {
+        $this->refreshToken = $refreshToken;
+
+        return $this;
     }
 }
