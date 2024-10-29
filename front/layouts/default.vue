@@ -1,27 +1,11 @@
 <template>
-  <div>
-    <header>
-      <ul>
-        <li><nuxt-link to="/">Home</nuxt-link></li>
-        <li><nuxt-link to="/about">About</nuxt-link></li>
-        <li v-if="!authenticated">
-          <nuxt-link to="/login">Login</nuxt-link>
-        </li>
-        <li v-if="!authenticated">
-          <nuxt-link to="/register">Register</nuxt-link>
-        </li>
-        <li v-if="authenticated">
-          <nuxt-link @click="logout">Logout</nuxt-link>
-        </li>
-      </ul>
-    </header>
-    <div class="mainContent">
-      <slot />
-    </div>
-    <footer>
-      <h1>Footer</h1>
-    </footer>
-  </div>
+  <v-main class="py-0">
+    <v-container class="h-screen">
+      <div class="mainContent">
+        <slot />
+      </div>
+    </v-container>
+  </v-main>
 </template>
 
 <script lang="ts" setup>

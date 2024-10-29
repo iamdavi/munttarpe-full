@@ -1,7 +1,12 @@
 <template>
-  <div>
+  <v-app>
+    <AppNavbar />
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
-  </div>
+  </v-app>
 </template>
+
+<script setup lang="ts">
+import "~/assets/css/style.css";
+</script>

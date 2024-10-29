@@ -3,14 +3,14 @@
 </template>
 
 <script lang="ts" setup>
-import { useAuthStore } from "~/store/auth"; // import the auth store we just created
+import { useAuthStore } from "~/store/auth";
 import { onMounted } from "vue";
 
-const authStore = useAuthStore(); // use authenticateUser action from  auth store
+const authStore = useAuthStore();
 
 onMounted(async () => {
   if (!authStore.user) {
-    await authStore.getUserData(); // Llama a la acción en el store de Pinia
+    await authStore.getUserData();
   }
 });
 </script>
