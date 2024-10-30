@@ -19,6 +19,7 @@ export default defineNuxtConfig({
       });
     },
     "@pinia/nuxt",
+    "@nuxtjs/i18n",
   ],
   vite: {
     vue: {
@@ -26,5 +27,28 @@ export default defineNuxtConfig({
         transformAssetUrls,
       },
     },
+  },
+  i18n: {
+    // Lista de locales disponibles
+    locales: [
+      { code: "eu", name: "Euskera", iso: "eu", file: "eu.json" },
+      { code: "es", name: "Español", iso: "es-ES", file: "es.json" },
+    ],
+    // Idioma predeterminado
+    defaultLocale: "es",
+    // Directorio donde están los archivos de traducción
+    langDir: "locales/",
+    // Habilita el modo de carga diferida para optimizar el rendimiento
+    lazy: true,
+    // Configuración de las rutas según el idioma
+    strategy: "prefix_except_default", // prefijo para las rutas en idiomas no predeterminados
+    detectBrowserLanguage: {
+      useCookie: true, // Habilita el uso de cookies para mantener el idioma seleccionado
+      cookieKey: "i18n_redirected",
+      alwaysRedirect: false, // Evita la redirección al idioma por defecto al cambiar de ruta
+      fallbackLocale: "en",
+    },
+    // Configuración de SEO para mejorar la accesibilidad en distintos idiomas
+    seo: true,
   },
 });

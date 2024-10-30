@@ -19,7 +19,7 @@
     <!-- /ICON -->
 
     <!-- TITLE -->
-    <v-app-bar-title to="/"> Munttarpe </v-app-bar-title>
+    <v-app-bar-title :to="localePath('index')"> Munttarpe </v-app-bar-title>
     <!-- /TITLE -->
     <!--
       <v-select
@@ -37,15 +37,15 @@
       <v-list density="compact" nav>
         <v-list-subheader class="font-weight-black">IDIOMAS</v-list-subheader>
         <v-list-item
-          v-for="item in langs"
-          :key="item.value"
-          :value="item"
+          v-for="item in locales"
+          :key="item.code"
+          :value="item.code"
           color="primary"
-          :active="item.value == current"
+          :active="item.code == locale"
           class="py-0"
-          @click="changeLang(item.value)"
+          @click="setLocale(item.code)"
         >
-          <v-list-item-title v-text="item.title"></v-list-item-title>
+          <v-list-item-title v-text="item.name"></v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -58,7 +58,11 @@
       "
       @click="changeTheme"
     ></v-btn>
-    <v-btn v-if="!authStore.authenticated" icon="mdi-login" to="/login"></v-btn>
+    <v-btn
+      v-if="!authStore.authenticated"
+      icon="mdi-login"
+      :to="localePath('login')"
+    ></v-btn>
     <v-btn v-else icon="mdi-logout" @click="authStore.logUserOut"></v-btn>
   </v-app-bar>
   <!-- LOGGED IN SECTIONS -->
@@ -126,8 +130,10 @@
 <script setup lang="ts">
 import { ref, watch, onBeforeMount } from "vue";
 import { useAuthStore } from "~/store/auth";
-import { useTheme, useLocale } from "vuetify";
+import { useTheme } from "vuetify";
 
+const { locale, locales, setLocale } = useI18n();
+const localePath = useLocalePath();
 const authStore = useAuthStore();
 const theme = useTheme();
 
@@ -182,12 +188,6 @@ const multasItems = [
   },
 ];
 
-const { current } = useLocale();
-const langs = [
-  { title: "Español", value: "es" },
-  { title: "Euskera", value: "eu" },
-];
-
 watch(group, () => {
   drawer.value = false;
 });
@@ -199,10 +199,6 @@ function onScrollTrans(e: any) {
 onBeforeMount(() => {
   window.addEventListener("scroll", onScrollTrans);
 });
-
-const changeLang = (newVal: string) => {
-  current.value = newVal;
-};
 
 const changeTheme = () => {
   theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
