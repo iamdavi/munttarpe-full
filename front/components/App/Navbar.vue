@@ -21,14 +21,6 @@
     <!-- TITLE -->
     <v-app-bar-title :to="localePath('index')"> Munttarpe </v-app-bar-title>
     <!-- /TITLE -->
-    <!--
-      <v-select
-      icon="mdi-translate"
-      :max-width="125"
-      v-model="current"
-      :items="langs"
-      variant="underlined"
-    ></v-select> -->
     <v-menu location="bottom end">
       <template v-slot:activator="{ props }">
         <v-btn icon="mdi-translate" v-bind="props"></v-btn>
@@ -93,7 +85,7 @@
         :key="i"
         :value="item.value"
         color="green-darken-1"
-        :to="item.link"
+        :to="localePath(item.link)"
       >
         <template v-slot:prepend>
           <v-icon :icon="item.icon"></v-icon>
