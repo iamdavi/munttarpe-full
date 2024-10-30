@@ -1,9 +1,7 @@
 <template>
   <v-main class="py-0">
     <v-container class="h-screen">
-      <div class="mainContent">
-        <slot />
-      </div>
+      <slot />
     </v-container>
   </v-main>
 </template>
