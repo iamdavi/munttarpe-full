@@ -3,7 +3,7 @@ import type { Equipo, EquipoResponse } from "~/interfaces/equipoInterfaces";
 
 export const useEquipoStore = defineStore("equipo", {
   state: () => ({
-    equipos: [],
+    equipos: [] as Equipo[],
     equipo: {
       id: null,
       nombre: "",
@@ -21,7 +21,10 @@ export const useEquipoStore = defineStore("equipo", {
         method: "post",
         body: this.equipo,
       });
-      console.log(res);
+      if (res.status == "success") {
+        this.equipos.push(res.equipo);
+      } else {
+      }
     },
   },
 });
