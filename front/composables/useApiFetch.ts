@@ -22,12 +22,12 @@ export async function $api<T>(
     // Verifica si el error es un 401 (token expirado)
     if (
       error?.response?.status === 401 &&
-      error?.response?.data?.message === "Expired JWT Token"
+      error?.response?._data?.message === "Expired JWT Token"
     ) {
       try {
         // Llama al endpoint de refresh token
         const refreshResponse = await $fetch<{ token: string }>(
-          "/api/auth/refresh",
+          "/auth/refresh",
           {
             method: "POST",
             baseURL: config.public.baseURL,
@@ -54,6 +54,7 @@ export async function $api<T>(
           },
         });
       } catch (refreshError) {
+        console.log(refreshError);
         // Si la renovación falla, desconecta al usuario
         auth.logUserOut();
         return Promise.reject(refreshError);

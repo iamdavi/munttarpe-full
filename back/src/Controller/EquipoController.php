@@ -53,11 +53,13 @@ class EquipoController extends AbstractController
         ]);
     }
 
-    #[Route('/edit/{id}', name: 'delete', methods: ['PUT'])]
+    #[Route('/edit/{id}', name: 'edit', methods: ['POST'])]
     public function edit(Request $request, Equipo $equipo): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         foreach ($data as $field => $value) {
+            $setter = Equipo::MAPPED_PROPERTIES_METHODS[$field] ?? false;
+            if (!$setter) continue;
             $equipo->{Equipo::MAPPED_PROPERTIES_METHODS[$field]}($value);
         }
 
@@ -76,7 +78,7 @@ class EquipoController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{id}', name: 'delete', methods: ['POST'])]
+    #[Route('/delete/{id}', name: 'delete', methods: ['DELETE'])]
     public function delete(Request $request, Equipo $equipo): JsonResponse
     {
         try {

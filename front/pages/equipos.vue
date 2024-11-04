@@ -11,16 +11,21 @@
           color="green-darken-1"
           prepend-icon="mdi-plus"
           variant="outlined"
-          @click="dialog = true"
+          @click="createEquipoEvent"
         >
           Crear
         </v-btn>
       </div>
     </v-col>
   </v-row>
+  <v-row>
+    <v-col cols="12" md="4" lg="3" v-for="equipo in equipos" :key="equipo.id">
+      <EquipoList :equipo="equipo" @editEquipoEvent="editEquipoEvent" />
+    </v-col>
+  </v-row>
   <EquipoModal
     :isOpen="dialog"
-    actionType="crear"
+    :actionType="actionType"
     @closeDialog="dialog = false"
   />
 </template>
@@ -30,9 +35,22 @@ import { storeToRefs } from "pinia";
 import { useEquipoStore } from "~/store/equipo";
 import { ref, onMounted } from "vue";
 
-const { getEquipos } = useEquipoStore();
+const { getEquipos, clearEquipo } = useEquipoStore();
 const { equipos } = storeToRefs(useEquipoStore());
+
 const dialog = ref(false);
+const actionType = ref("crear");
+
+const createEquipoEvent = () => {
+  clearEquipo();
+  actionType.value = "crear";
+  dialog.value = true;
+};
+
+const editEquipoEvent = () => {
+  actionType.value = "edit";
+  dialog.value = true;
+};
 
 onMounted(() => {
   getEquipos();

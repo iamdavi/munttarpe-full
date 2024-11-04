@@ -1,5 +1,5 @@
 export interface Equipo {
-  id: number | null;
+  id: number;
   nombre: string;
   genero: "male" | "female";
   color: string;

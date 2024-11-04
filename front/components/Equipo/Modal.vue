@@ -1,7 +1,9 @@
 <template>
   <v-dialog v-model="props.isOpen" :width="500">
-    <v-form @submit.prevent="createEquipo">
+    <v-form @submit.prevent="handleForm">
       <v-card
+        :disabled="loading"
+        :loading="loading"
         :prepend-icon="
           props.actionType == 'crear'
             ? 'mdi-account-multiple-plus-outline'
@@ -72,20 +74,34 @@ import { storeToRefs } from "pinia";
 import { useEquipoStore } from "~/store/equipo";
 import { ref, computed } from "vue";
 
-const props = defineProps({
-  isOpen: Boolean,
-  actionType: String,
-});
-
-const { createEquipo } = useEquipoStore(); // use authenticateUser action from  auth store
+const { createEquipo, editEquipo } = useEquipoStore();
 const { equipo } = storeToRefs(useEquipoStore());
 
+const emit = defineEmits(["closeDialog"]);
+interface Props {
+  isOpen: boolean;
+  actionType: "crear" | "edit";
+}
+const props = defineProps<Props>();
+
+const loading = ref(false);
+
 const cambioGenero = () => {
-  console.log(equipo.value.genero);
   equipo.value.color = equipo.value.genero == "male" ? "#03c03c" : "#5e35b1";
 };
 
 const title = computed(() => {
   return props.actionType == "crear" ? "Crear equipo" : "Editar equipo";
 });
+
+const handleForm = async () => {
+  loading.value = true;
+  if (props.actionType == "crear") {
+    await createEquipo();
+  } else {
+    await editEquipo();
+  }
+  loading.value = false;
+  emit("closeDialog");
+};
 </script>
