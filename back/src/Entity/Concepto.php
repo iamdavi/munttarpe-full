@@ -23,7 +23,7 @@ class Concepto
 
     #[ORM\ManyToOne(inversedBy: 'conceptos')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?equipo $equipo = null;
+    private ?Equipo $equipo = null;
 
     /**
      * @var Collection<int, Multa>
@@ -65,12 +65,12 @@ class Concepto
         return $this;
     }
 
-    public function getEquipo(): ?equipo
+    public function getEquipo(): ?Equipo
     {
         return $this->equipo;
     }
 
-    public function setEquipo(?equipo $equipo): static
+    public function setEquipo(?Equipo $equipo): static
     {
         $this->equipo = $equipo;
 

@@ -43,10 +43,17 @@ class Equipo
     #[ORM\OneToMany(targetEntity: Concepto::class, mappedBy: 'equipo', orphanRemoval: true)]
     private Collection $conceptos;
 
+    /**
+     * @var Collection<int, Evento>
+     */
+    #[ORM\ManyToMany(targetEntity: Evento::class, mappedBy: 'equipos')]
+    private Collection $eventos;
+
     public function __construct()
     {
         $this->jugadores = new ArrayCollection();
         $this->conceptos = new ArrayCollection();
+        $this->eventos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -158,5 +165,32 @@ class Equipo
             'color' => $this->getColor(),
             'genero' => $this->getGenero()
         ];
+    }
+
+    /**
+     * @return Collection<int, Evento>
+     */
+    public function getEventos(): Collection
+    {
+        return $this->eventos;
+    }
+
+    public function addEvento(Evento $evento): static
+    {
+        if (!$this->eventos->contains($evento)) {
+            $this->eventos->add($evento);
+            $evento->addEquipo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvento(Evento $evento): static
+    {
+        if ($this->eventos->removeElement($evento)) {
+            $evento->removeEquipo($this);
+        }
+
+        return $this;
     }
 }
