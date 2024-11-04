@@ -40,4 +40,9 @@ class EquipoRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function getEquiposByArrayIds(array $ids)
+    {
+        return [];
+    }
 }

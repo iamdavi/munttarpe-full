@@ -11,6 +11,16 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: EventoRepository::class)]
 class Evento
 {
+
+    const MAPPED_PROPERTIES_METHODS = [
+        'tipo' => 'setTipo',
+        'descripcion' => 'setDescripcion',
+        'recurrente' => 'setRecurrente',
+        'fecha' => 'setFecha',
+        'hora' => 'setHora',
+        'dias' => 'setDias',
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -144,5 +154,18 @@ class Evento
         $this->equipos->removeElement($equipo);
 
         return $this;
+    }
+
+    public function serialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'tipo' => $this->getTipo(),
+            'descripcion' => $this->getDescripcion(),
+            'recurrente' => $this->isRecurrente(),
+            'fecha' => $this->getFecha(),
+            'hora' => $this->getHora(),
+            'dias' => $this->getDias(),
+        ];
     }
 }

@@ -151,12 +151,12 @@ const items = [
     link: "/jugadores",
     icon: "mdi-handball",
   },
-  // {
-  //   title: "Eventos",
-  //   value: "eventos",
-  //   link: "/eventos",
-  //   icon: "mdi-calendar-multiselect",
-  // },
+  {
+    title: "Calendario",
+    value: "calendario",
+    link: "/calendario",
+    icon: "mdi-calendar-multiselect",
+  },
 ];
 
 const multasItems = [
