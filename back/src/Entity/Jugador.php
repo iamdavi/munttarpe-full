@@ -10,6 +10,32 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: JugadorRepository::class)]
 class Jugador
 {
+
+    const MAPPED_PROPERTIES_METHODS = [
+        'nombre' => 'setNombre',
+        'apellidos' => 'setApellidos',
+        'mote' => 'setMote',
+        'posicion' => 'setPosicion',
+        'dorsal' => 'setDorsal',
+        'rol' => 'setRol',
+    ];
+
+    const POSICION_OPTIONS = [
+        'portero' => 'Portero',
+        'central' => 'Central',
+        'pivote' => 'Pivote',
+        'latde' => 'Lateral derecho',
+        'latiz' => 'Lateral izquierdo',
+        'extde' => 'Extremo derecho',
+        'extiz' => 'Extremo izquierdo',
+    ];
+
+    const ROL_OPTIONS = [
+        'jugador' => 'Jugador',
+        'entrenador' => 'Entrenador',
+        'segentrenador' => '2º Entrenador',
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -35,7 +61,7 @@ class Jugador
 
     #[ORM\ManyToOne(inversedBy: 'jugadores')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?equipo $equipo = null;
+    private ?Equipo $equipo = null;
 
     /**
      * @var Collection<int, Multa>
@@ -165,5 +191,19 @@ class Jugador
         }
 
         return $this;
+    }
+
+    public function serialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'nombre' => $this->getNombre(),
+            'apellidos' => $this->getApellidos(),
+            'mote' => $this->getMote(),
+            'posicion' => $this->getPosicion(),
+            'dorsal' => $this->getDorsal(),
+            'rol' => $this->getRol(),
+            'equipo' => $this->getEquipo()->serialize()
+        ];
     }
 }

@@ -21,42 +21,26 @@
     <g>
       <path
         d="M131.433,526.005c114.2,-269.379 2.692,-366.226 2.692,-366.226l74.325,-76.146c69.442,91.203 182.063,58.391 195.029,49.531c12.971,-8.86 14.188,-34.634 14.188,-34.634l33.229,-2.819l33.021,2.819c-0,0 -0.796,29.865 14.096,34.634c85.225,27.287 135.7,5.434 190.891,-44.702l73.863,80.765c-0,-0 -114.167,100.37 5.596,356.778"
-        style="
-          fill: none;
-          fill-rule: nonzero;
-          stroke: rgb(3, 192, 60);
-          stroke-width: 16.67px;
-        "
+        style="fill: none; fill-rule: nonzero; stroke-width: 16.67px"
+        :style="{ stroke: color ? color : 'rgb(3, 192, 60)' }"
         class="svg-elem-1"
       ></path>
       <path
         d="M78.87,540.455c54.17,-124.908 83.274,-271.564 -10.499,-385.568c64.458,-71.752 64.458,-71.752 128.917,-143.503c75.379,70.01 176.825,145.611 210.066,-3.051c20.9,0.339 21.884,0.339 42.788,0.678c20.508,-0.339 20.508,-0.339 41.016,-0.678c32.488,148.088 131.554,73.629 206.113,3.051c63.246,71.751 63.246,71.751 126.492,143.503c-91.096,112.871 -63.942,256.901 -12.451,380.859"
-        style="
-          fill: none;
-          fill-rule: nonzero;
-          stroke: rgb(3, 192, 60);
-          stroke-width: 16.67px;
-        "
+        style="fill: none; fill-rule: nonzero; stroke-width: 16.67px"
+        :style="{ stroke: color ? color : 'rgb(3, 192, 60)' }"
         class="svg-elem-2"
       ></path>
       <path
         d="M77.195,689.197c241.079,-54.329 482.676,-57.812 724.852,-4.512c-5.332,21.782 -11.514,39.94 -17.739,48.803c-56.612,80.6 -118.27,90.125 -208.437,109.271c-46.871,9.95 -83.667,35.309 -126.217,57.709c-43.571,-22.505 -80.912,-47.767 -128.637,-57.709c-91.271,-19.016 -154.475,-28.304 -212.434,-109.271c-9.023,-12.606 -20.593,-27.813 -31.388,-44.291"
-        style="
-          fill: none;
-          fill-rule: nonzero;
-          stroke: rgb(3, 192, 60);
-          stroke-width: 16.67px;
-        "
+        style="fill: none; fill-rule: nonzero; stroke-width: 16.67px"
+        :style="{ stroke: color ? color : 'rgb(3, 192, 60)' }"
         class="svg-elem-3"
       ></path>
       <path
         d="M8.333,559.218l43.9,136.354c40.896,-9.354 81.829,-18.716 123.152,-25.948c42.095,-7.367 84.413,-13.797 126.957,-17.825c142.914,-13.532 283.025,-6.128 424.371,18.004c42.741,7.298 85.112,16.668 127.45,26.031l33.095,-139.858c-280.639,-80.079 -599.582,-78.229 -879.925,3.242Z"
-        style="
-          fill: none;
-          fill-rule: nonzero;
-          stroke: rgb(3, 192, 60);
-          stroke-width: 16.67px;
-        "
+        style="fill: none; fill-rule: nonzero; stroke-width: 16.67px"
+        :style="{ stroke: color ? color : 'rgb(3, 192, 60)' }"
         class="svg-elem-4"
       ></path>
       <g
@@ -293,6 +277,7 @@ import { ref, watch, onMounted } from "vue";
 const activeClass = ref("");
 
 const props = defineProps({
+  color: String,
   iconType: String,
   genderType: String,
 });
@@ -300,10 +285,16 @@ const props = defineProps({
 const type = ref(props.iconType);
 const gender = ref(props.genderType);
 
+const color = ref(props.color);
+
 watch(
-  () => props.genderType,
+  () => props.color,
   (newVal) => {
-    gender.value = newVal;
+    if (newVal) {
+      color.value = newVal;
+    } else {
+      color.value = "#03c03c";
+    }
   }
 );
 

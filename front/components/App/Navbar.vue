@@ -145,12 +145,12 @@ const items = [
     link: "/equipos",
     icon: "mdi-account-group",
   },
-  // {
-  //   title: "Jugadores",
-  //   value: "jugadores",
-  //   link: "/jugadores",
-  //   icon: "mdi-handball",
-  // },
+  {
+    title: "Jugadores",
+    value: "jugadores",
+    link: "/jugadores",
+    icon: "mdi-handball",
+  },
   // {
   //   title: "Eventos",
   //   value: "eventos",

@@ -13,6 +13,7 @@ export const useEquipoStore = defineStore("equipo", {
   }),
   actions: {
     async getEquipos() {
+      if (this.equipos.length !== 0) return;
       const res: any = await $api("/equipo/list");
       if (Array.isArray(res)) {
         this.equipos = res;
