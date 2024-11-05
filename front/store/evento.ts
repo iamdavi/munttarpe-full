@@ -6,10 +6,11 @@ export const useEventoStore = defineStore("evento", {
     eventos: [] as Evento[],
     evento: {
       id: 0,
-      equipo: [],
+      equipos: [],
       tipo: "entrenamiento",
       recurrente: false,
       fecha: "",
+      descripcion: "",
       hora: "",
       dias: [],
     } as Evento,
@@ -31,7 +32,7 @@ export const useEventoStore = defineStore("evento", {
         this.eventos.push(res.evento);
       } else {
       }
-      this.clearJugador();
+      this.clearEvento();
     },
     async deleteEvento(id: number) {
       const res: EventoResponse = await $api(`/evento/delete/${id}`, {
@@ -56,15 +57,16 @@ export const useEventoStore = defineStore("evento", {
       } else {
       }
     },
-    setJugador(jugadorData: Evento) {
-      this.evento = jugadorData;
+    setEvento(eventoData: Evento) {
+      this.evento = eventoData;
     },
-    clearJugador() {
+    clearEvento() {
       this.evento = {
         id: 0,
-        equipo: [],
+        equipos: [],
         tipo: "entrenamiento",
         recurrente: false,
+        descripcion: "",
         fecha: "",
         hora: "",
         dias: [],

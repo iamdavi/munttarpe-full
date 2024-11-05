@@ -2,12 +2,13 @@ import type { Equipo } from "./equipoInterfaces";
 
 export interface Evento {
   id: number;
-  equipo: Equipo[] | null;
+  equipos: Equipo[] | null;
   tipo: "entrenamiento" | "evento" | "partido";
   recurrente: boolean;
   fecha: string;
   hora: string;
   dias: number[];
+  descripcion: string;
 }
 
 export interface EventoApiSuccess {

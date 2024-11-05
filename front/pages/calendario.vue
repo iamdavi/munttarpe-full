@@ -28,11 +28,7 @@
         class="mt-3"
         variant="outlined"
         block
-        @click="
-          eventType = 'period';
-          actionType = 'crear';
-          isDialogOpen = true;
-        "
+        @click="openEventoModal(true)"
       >
         Crear evento recurrente
       </v-btn>
@@ -51,11 +47,7 @@
             variant="outlined"
             prepend-icon="mdi-plus"
             color="green-darken-1"
-            @click="
-              eventType = 'day';
-              actionType = 'crear';
-              isDialogOpen = true;
-            "
+            @click="openEventoModal(false)"
           >
             Evento para {{ formatedDate }}
           </v-btn>
@@ -66,33 +58,36 @@
           sm="12"
           cols="12"
           class="position-relative"
-          v-for="event in databaseStore.eventos"
+          v-for="event in eventos"
           :key="event.id"
         >
+          <!--
           <EventoCard
             :evento="event"
-            :equipos="getEquipoDataById(event.equipos)"
             @deleteEvent="showDeleteDialog(event)"
             @editEvent="editEventHandler(event)"
           />
+          -->
         </v-col>
       </v-row>
     </v-col>
   </v-row>
-  <v-dialog v-model="deleteEventDialog" max-width="500">
+  <v-dialog v-model="deleteDialog" max-width="500">
     <v-card title="Eliminar evento?" prepend-icon="mdi-calendar-remove-outline">
       <v-divider></v-divider>
       <div class="position-relative card-delete-preview">
+        <!--
         <EventoCard
           :evento="eventToDelete"
           :equipos="getEquipoDataById(eventToDelete?.equipos)"
           :isPreview="true"
         />
+        -->
       </div>
       <v-divider></v-divider>
       <v-card-actions class="d-flex justify-space-between">
         <v-btn
-          @click="deleteEventDialog = false"
+          @click="deleteDialog = false"
           prepend-icon="mdi-close"
           variant="outlined"
         >
@@ -110,15 +105,11 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <EventoFormModal
-    :isOpen="isDialogOpen"
-    :actionType="actionType"
-    :eventType="eventType"
-    :eventDay="formatedDate"
-    :evento="evento"
+  <EventoModal
+    :isOpen="dialog"
     @closeDialog="
-      isDialogOpen = false;
-      updateEventMarkers();
+      dialog = false
+      // updateEventMarkers();
     "
   />
 </template>
@@ -126,11 +117,24 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useDate } from "vuetify";
+import { useEventoStore } from "~/store/evento";
+import { useEquipoStore } from "~/store/equipo";
 
 const date = useDate();
 const selectedDate = ref(new Date());
 const formatedDate = ref(date.format(selectedDate, "keyboardDate"));
 const datePicker = ref();
+const dialog = ref(false);
+const deleteDialog = ref(false);
+
+const { getEquipos } = useEquipoStore();
+const { getEventos } = useEventoStore();
+const { eventos, evento } = storeToRefs(useEventoStore());
+
+const openEventoModal = (isRecurrente: boolean) => {
+  evento.value.recurrente = isRecurrente;
+  dialog.value = true;
+};
 
 const updateEventMarkers = () => {
   // Usa un timeout para asegurar que el DOM esté renderizado
@@ -189,9 +193,10 @@ const updateEventMarkers = () => {
   });
 };
 
-onMounted(async () => {
-  await databaseStore.getEquipos();
-  await databaseStore.getEvents();
+onMounted(() => {
+  getEquipos();
+  getEventos();
+  evento.value.fecha = formatedDate.value;
   updateEventMarkers();
 });
 

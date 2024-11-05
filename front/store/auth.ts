@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-
+import { useNotificacionStore } from "./notificacion";
 import type { UserPayloadInterface } from "~/interfaces/user";
 import type {
   AuthResponse,
@@ -16,16 +16,22 @@ export const useAuthStore = defineStore("auth", {
   }),
   actions: {
     async authenticateUser({ email, password }: UserPayloadInterface) {
-      const res: AuthResponse = await $api("/auth/login", {
-        method: "post",
-        body: { email, password },
-      });
-      if (res.status == "success") {
-        const token = useCookie("token"); // useCookie new hook in nuxt 3
-        token.value = res.token; // set token to cookie
-        this.token = res.token;
-        this.refreshToken = res.refreshToken;
-        this.authenticated = true; // set authenticated  state value to true
+      const notificacionStore = useNotificacionStore();
+      try {
+        const res: AuthResponse = await $api("/auth/login", {
+          method: "post",
+          body: { email, password },
+        });
+        if (res.status == "success") {
+          const token = useCookie("token");
+          token.value = res.token;
+          this.token = res.token;
+          this.refreshToken = res.refreshToken;
+          this.authenticated = true;
+        }
+      } catch (error) {
+        this.authenticated = false;
+        notificacionStore.addError(error);
       }
     },
     async registerUser({ email, password }: UserPayloadInterface) {

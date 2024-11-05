@@ -46,7 +46,7 @@ export default defineNuxtConfig({
       useCookie: true, // Habilita el uso de cookies para mantener el idioma seleccionado
       cookieKey: "i18n_redirected",
       alwaysRedirect: false, // Evita la redirección al idioma por defecto al cambiar de ruta
-      fallbackLocale: "en",
+      fallbackLocale: "es",
     },
     // Configuración de SEO para mejorar la accesibilidad en distintos idiomas
     seo: true,
