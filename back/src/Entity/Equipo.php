@@ -46,7 +46,7 @@ class Equipo
     /**
      * @var Collection<int, Evento>
      */
-    #[ORM\ManyToMany(targetEntity: Evento::class, mappedBy: 'equipos')]
+    #[ORM\ManyToMany(targetEntity: Evento::class, mappedBy: 'equipos', fetch: 'EAGER')]
     private Collection $eventos;
 
     public function __construct()

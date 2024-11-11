@@ -44,6 +44,7 @@ export const useEventoStore = defineStore("evento", {
         });
       } else {
       }
+      this.clearEvento();
     },
     async editEvento() {
       const res: EventoResponse = await $api(`/evento/edit/${this.evento.id}`, {

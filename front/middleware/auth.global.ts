@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/store/auth";
+import { useNotificacionStore } from "~/store/notificacion";
 
 export default defineNuxtRouteMiddleware((to, from) => {
   const { authenticated, token } = storeToRefs(useAuthStore());
@@ -8,8 +9,9 @@ export default defineNuxtRouteMiddleware((to, from) => {
     token.value = cookieToken.value;
   }
   const publicRoutes = ["/login", "/register", "/"];
-  if (!authenticated && !publicRoutes.includes(to.path)) {
-    console.log("401 Unautorized");
+  if (!authenticated.value && !publicRoutes.includes(to.path)) {
+    const { showError } = useNotificacionStore();
+    showError("No tienes acceso a esta ruta");
     return navigateTo("/login");
   }
 });

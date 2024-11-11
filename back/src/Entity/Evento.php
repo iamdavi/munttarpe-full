@@ -47,7 +47,7 @@ class Evento
     /**
      * @var Collection<int, Equipo>
      */
-    #[ORM\ManyToMany(targetEntity: Equipo::class, inversedBy: 'eventos')]
+    #[ORM\ManyToMany(targetEntity: Equipo::class, inversedBy: 'eventos', fetch: 'EAGER')]
     private Collection $equipos;
 
     public function __construct()
@@ -163,9 +163,10 @@ class Evento
             'tipo' => $this->getTipo(),
             'descripcion' => $this->getDescripcion(),
             'recurrente' => $this->isRecurrente(),
-            'fecha' => $this->getFecha(),
-            'hora' => $this->getHora(),
+            'fecha' => $this->getFecha()->format('m/d/Y'),
+            'hora' => $this->getHora()->format('H:m'),
             'dias' => $this->getDias(),
+            'equipos' => $this->getEquipos()->map(fn($equipo) => $equipo->serialize())->toArray()
         ];
     }
 }

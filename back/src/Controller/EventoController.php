@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Evento;
 use App\Entity\Equipo;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -33,17 +34,24 @@ class EventoController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $equiposIds = $data['equipos'];
-        $equipos = $this->em->getRepository(Equipo::class)->find($data['equipo']['id']);
+        $equiposIds = array_map(fn(array $e) => $e['id'], $data['equipos']);
+        $equipos = $this->em->getRepository(Equipo::class)->getEquiposByArrayIds($equiposIds);
+
+        $fecha = new DateTime($data['fecha']);
+        $hora = new DateTime($data['hora']);
 
         $evento = new Evento();
-        $evento->setTipo($data['nombre']);
-        $evento->setDescripcion($data['apellidos']);
-        $evento->setRecurrente($data['mote']);
-        $evento->setFecha($data['posicion']);
-        $evento->setHora($data['dorsal']);
-        $evento->setDias($data['rol']);
-        // @TODO => Meter equipos
+        $evento->setTipo($data['tipo']);
+        $evento->setDescripcion($data['descripcion']);
+        $evento->setRecurrente($data['recurrente']);
+        $evento->setFecha($fecha);
+        $evento->setHora($hora);
+        $evento->setDias($data['dias']);
+
+        foreach ($equipos as $equipo) {
+            $equipo->addEvento($evento);
+            $evento->addEquipo($equipo);
+        }
 
         try {
             $this->em->persist($evento);

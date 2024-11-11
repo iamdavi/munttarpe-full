@@ -9,6 +9,7 @@ export const useNotificacionStore = defineStore("notificacion", {
   actions: {
     showError(message: string) {
       this.message = message;
+      this.type = "error";
       this.showSnackbar = true;
     },
     hideSnackbar() {

@@ -43,6 +43,10 @@ class EquipoRepository extends ServiceEntityRepository
 
     public function getEquiposByArrayIds(array $ids)
     {
-        return [];
+        $qb = $this->createQueryBuilder('e')
+            ->where('e.id in (:ids)')
+            ->setParameter('ids', $ids);
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 }

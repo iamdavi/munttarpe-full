@@ -34,17 +34,6 @@
       <div v-if="!!props.evento.descripcion">
         <p class="px-4 py-2">{{ props.evento.descripcion }}</p>
       </div>
-      <v-divider></v-divider>
-      <v-card-actions v-if="!props.isPreview">
-        <v-btn
-          block
-          variant="outlined"
-          prepend-icon="mdi-pencil-outline"
-          @click="$emit('editEvent')"
-        >
-          Editar
-        </v-btn>
-      </v-card-actions>
     </div>
   </v-card>
   <v-tooltip
@@ -71,15 +60,13 @@ const props = defineProps<{
 const emits = defineEmits(["deleteEvent", "editEvent"]);
 
 const getSubtitle = () => {
-  let result = props.evento.hora ? props.evento.hora : "??:??";
-  result += " - ";
-  if (props.evento.recurrente) {
-    const daysNames = getNameOfDaysByArray(props.evento.dias);
-    result += daysNames.map((e) => e.slice(0, 2)).join(", ");
-  } else {
-    result += props.evento.dias;
-  }
-  return result;
+  const firstPart = props.evento.recurrente
+    ? getNameOfDaysByArray(props.evento.dias)
+        .map((e) => e.slice(0, 2))
+        .join(",")
+    : props.evento.fecha;
+  const secondPart = props.evento.hora;
+  return `${firstPart} - ${secondPart}`;
 };
 
 const getNameOfDaysByArray = (days: any) => {

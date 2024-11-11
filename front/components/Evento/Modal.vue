@@ -45,7 +45,7 @@
               <v-chip v-bind="props" :text="item.raw.nombre">
                 <template v-slot:prepend>
                   <div class="me-3 icon-dinamic-wrapper">
-                    <IconDinamic :color="item.raw.color" />
+                    <HomeIconDynamic :color="item.raw.color" />
                   </div>
                 </template>
               </v-chip>
@@ -55,7 +55,7 @@
               <v-list-item v-bind="props" :title="item.raw.nombre">
                 <template v-slot:prepend>
                   <div class="me-3 icon-dinamic-wrapper">
-                    <IconDinamic :color="item.raw.color" />
+                    <HomeIconDynamic :color="item.raw.color" />
                   </div>
                 </template>
               </v-list-item>

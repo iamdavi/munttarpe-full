@@ -6,7 +6,7 @@ import * as directives from "vuetify/directives";
 import { createVuetify } from "vuetify";
 import { VTimePicker } from "vuetify/labs/VTimePicker";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
-import { createVueI18nAdapter } from "vuetify/locale/adapters/vue-i18n";
+import { es } from "vuetify/locale"; // Importa el idioma español
 
 export default defineNuxtPlugin((app) => {
   const vuetify = createVuetify({
@@ -25,6 +25,10 @@ export default defineNuxtPlugin((app) => {
       sets: {
         mdi,
       },
+    },
+    locale: {
+      locale: "es", // Establece el idioma por defecto a español
+      messages: { es }, // Añade el idioma español a la configuración
     },
   });
   app.vueApp.use(vuetify);

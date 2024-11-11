@@ -11,6 +11,16 @@
   </v-row>
   <v-row>
     <v-col cols="12" md="5" xl="4">
+      <v-btn
+        class="mb-3"
+        block
+        variant="outlined"
+        prepend-icon="mdi-plus"
+        color="green-darken-1"
+        @click="openEventoModal(false)"
+      >
+        Evento para {{ formatedDate }}
+      </v-btn>
       <v-date-picker
         :weekdays="[1, 2, 3, 4, 5, 6, 0]"
         first-day-of-week="1"
@@ -22,35 +32,21 @@
         @update:month="updateEventMarkers"
       >
       </v-date-picker>
-      <v-btn
-        color="green-darken-1"
-        prepend-icon="mdi-calendar-refresh"
-        class="mt-3"
-        variant="outlined"
-        block
-        @click="openEventoModal(true)"
-      >
-        Crear evento recurrente
-      </v-btn>
-      <p class="text-caption text-grey">
-        P.e.: entrenamientos, eventos semanales, recordatorios...
-      </p>
     </v-col>
     <v-col cols="12" md="7" xl="8">
       <v-row>
-        <v-col
-          cols="12"
-          class="d-flex flex-column flex-md-row justify-space-between align-center ga-3"
-        >
-          <h3>Todos los eventos</h3>
+        <v-col cols="12" class="text-end">
           <v-btn
-            variant="outlined"
-            prepend-icon="mdi-plus"
             color="green-darken-1"
-            @click="openEventoModal(false)"
+            prepend-icon="mdi-calendar-refresh"
+            variant="outlined"
+            @click="openEventoModal(true)"
           >
-            Evento para {{ formatedDate }}
+            Crear evento recurrente
           </v-btn>
+          <p class="text-caption text-grey">
+            P.e.: entrenamientos, eventos semanales, recordatorios...
+          </p>
         </v-col>
         <v-col
           xl="4"
@@ -61,13 +57,12 @@
           v-for="event in eventos"
           :key="event.id"
         >
-          <!--
           <EventoCard
+            :isPreview="false"
             :evento="event"
             @deleteEvent="showDeleteDialog(event)"
             @editEvent="editEventHandler(event)"
           />
-          -->
         </v-col>
       </v-row>
     </v-col>
@@ -76,13 +71,7 @@
     <v-card title="Eliminar evento?" prepend-icon="mdi-calendar-remove-outline">
       <v-divider></v-divider>
       <div class="position-relative card-delete-preview">
-        <!--
-        <EventoCard
-          :evento="eventToDelete"
-          :equipos="getEquipoDataById(eventToDelete?.equipos)"
-          :isPreview="true"
-        />
-        -->
+        <EventoCard :evento="evento" :isPreview="true" />
       </div>
       <v-divider></v-divider>
       <v-card-actions class="d-flex justify-space-between">
@@ -97,8 +86,7 @@
           prepend-icon="mdi-trash-can-outline"
           color="red"
           variant="outlined"
-          @click="deleteEventAction()"
-          :loading="databaseStore.loadingDeleteDoc"
+          @click="deleteEventAction(evento.id)"
         >
           Eliminar
         </v-btn>
@@ -119,6 +107,7 @@ import { ref } from "vue";
 import { useDate } from "vuetify";
 import { useEventoStore } from "~/store/evento";
 import { useEquipoStore } from "~/store/equipo";
+import type { Evento } from "~/interfaces/eventoInterfaces";
 
 const date = useDate();
 const selectedDate = ref(new Date());
@@ -128,13 +117,25 @@ const dialog = ref(false);
 const deleteDialog = ref(false);
 
 const { getEquipos } = useEquipoStore();
-const { getEventos } = useEventoStore();
+const { getEventos, setEvento, deleteEvento } = useEventoStore();
 const { eventos, evento } = storeToRefs(useEventoStore());
 
 const openEventoModal = (isRecurrente: boolean) => {
   evento.value.recurrente = isRecurrente;
   dialog.value = true;
 };
+
+const deleteEventAction = (id: number) => {
+  deleteEvento(id);
+  deleteDialog.value = false;
+};
+
+const showDeleteDialog = (event: Evento) => {
+  setEvento(event);
+  deleteDialog.value = true;
+};
+
+const editEventHandler = (event: Evento) => {};
 
 const updateEventMarkers = () => {
   // Usa un timeout para asegurar que el DOM esté renderizado
@@ -157,13 +158,15 @@ const updateEventMarkers = () => {
         .reverse()
         .join("/");
 
+      console.log(date);
+
       if (!date) return;
 
-      const eventsToHandle = databaseStore.eventos.filter((event) => {
-        if (event.eventType == "period") {
-          return event.weeksDay.includes(obtenerNumeroDia(date));
+      const eventsToHandle = eventos.value.filter((event) => {
+        if (event.recurrente) {
+          return event.dias.includes(obtenerNumeroDia(date));
         } else {
-          return event.day === date;
+          return event.dias === date;
         }
       });
 
@@ -176,16 +179,16 @@ const updateEventMarkers = () => {
       eventDots.innerHTML = "";
 
       eventsToHandle.forEach((event) => {
-        event.equipos.forEach((equipo) => {
+        event.equipos?.forEach((equipo) => {
           // En caso de que ya haya un punto para el equipo, no colocamos más
           if (eventDots.querySelector(`[data-equipo="${equipo}"]`)) return;
 
-          const equipoData = databaseStore.equipos.find((e) => e.id == equipo);
-          const dot = document.createElement("div");
-          dot.dataset.equipo = equipo;
-          dot.classList.add("event-dot");
-          dot.style.backgroundColor = equipoData.color;
-          eventDots.appendChild(dot);
+          // const equipoData = equipos.find((e) => e.id == equipo);
+          // const dot = document.createElement("div");
+          // dot.dataset.equipo = equipo.id;
+          // dot.classList.add("event-dot");
+          // dot.style.backgroundColor = equipoData.color;
+          // eventDots.appendChild(dot);
         });
       });
       cell.appendChild(eventDots);
@@ -202,5 +205,12 @@ onMounted(() => {
 
 watch(selectedDate, (newVal) => {
   formatedDate.value = date.format(newVal, "keyboardDate");
+  evento.value.fecha = formatedDate.value;
 });
 </script>
+
+<style scoped>
+.card-delete-preview {
+  scale: 0.8;
+}
+</style>
