@@ -1,15 +1,14 @@
 import { defineStore } from "pinia";
-import type { Equipo, EquipoResponse } from "~/interfaces/equipoInterfaces";
+import {
+  createBlankEquipo,
+  type Equipo,
+  type EquipoResponse,
+} from "~/interfaces/equipoInterfaces";
 
 export const useEquipoStore = defineStore("equipo", {
   state: () => ({
     equipos: [] as Equipo[],
-    equipo: {
-      id: 0,
-      nombre: "",
-      genero: "male",
-      color: "#03c03c",
-    } as Equipo,
+    equipo: createBlankEquipo() as Equipo,
   }),
   actions: {
     async getEquipos() {
@@ -57,12 +56,7 @@ export const useEquipoStore = defineStore("equipo", {
       this.equipo = equipoData;
     },
     clearEquipo() {
-      this.equipo = {
-        id: 0,
-        nombre: "",
-        genero: "male",
-        color: "#03c03c",
-      };
+      this.equipo = createBlankEquipo();
     },
   },
 });

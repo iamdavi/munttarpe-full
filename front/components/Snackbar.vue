@@ -1,9 +1,9 @@
 <template>
-  <v-snackbar v-model="showSnackbar" :timeout="2000" :color="type" bottom right>
+  <v-snackbar v-model="showSnackbar" :timeout="2000" :color="type" bottom right class="mb-3">
     {{ message }}
     <template v-slot:actions>
       <v-btn
-        color="red"
+        color="blak"
         variant="text"
         @click="closeSnackbar"
         icon="mdi-close"

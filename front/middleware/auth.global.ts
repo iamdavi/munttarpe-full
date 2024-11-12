@@ -10,8 +10,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
   }
   const publicRoutes = ["/login", "/register", "/"];
   if (!authenticated.value && !publicRoutes.includes(to.path)) {
-    const { showError } = useNotificacionStore();
-    showError("No tienes acceso a esta ruta");
+    const { showNotification } = useNotificacionStore();
+    showNotification("No tienes acceso a esta ruta");
     return navigateTo("/login");
   }
 });

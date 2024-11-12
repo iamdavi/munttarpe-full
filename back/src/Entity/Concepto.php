@@ -10,6 +10,12 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ConceptoRepository::class)]
 class Concepto
 {
+
+    const MAPPED_PROPERTIES_METHODS = [
+        'texto' => 'setNombre',
+        'valor' => 'setColor',
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -105,5 +111,15 @@ class Concepto
         }
 
         return $this;
+    }
+
+    public function serialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'texto' => $this->getTexto(),
+            'valor' => $this->getValor(),
+            'equipo' => $this->getEquipo()->serialize()
+        ];
     }
 }

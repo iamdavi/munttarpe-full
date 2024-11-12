@@ -160,24 +160,24 @@ const items = [
 ];
 
 const multasItems = [
-  // {
-  //   title: "Pendientes",
-  //   value: "pendientes",
-  //   link: "/multas-pendientes",
-  //   icon: "mdi-invoice-clock-outline",
-  // },
-  // {
-  //   title: "Pagadas",
-  //   value: "pagadas",
-  //   link: "/multas-pagadas",
-  //   icon: "mdi-invoice-check-outline",
-  // },
-  // {
-  //   title: "Estadísticas",
-  //   value: "estadisticas",
-  //   link: "/multas-estadisticas",
-  //   icon: "mdi-chart-line",
-  // },
+  {
+    title: "Pendientes",
+    value: "pendientes",
+    link: "/multas/pendientes",
+    icon: "mdi-invoice-clock-outline",
+  },
+  {
+    title: "Pagadas",
+    value: "pagadas",
+    link: "/multas/pagadas",
+    icon: "mdi-invoice-check-outline",
+  },
+  {
+    title: "Estadísticas",
+    value: "estadisticas",
+    link: "/multas/estadisticas",
+    icon: "mdi-chart-line",
+  },
 ];
 
 watch(group, () => {
