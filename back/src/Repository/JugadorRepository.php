@@ -40,4 +40,15 @@ class JugadorRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function getJugadoresWithMultasByEquipo(int $id): array
+    {
+        $qb = $this->createQueryBuilder('j')
+            ->innerJoin('j.equipo', 'e')
+            ->innerJoin('j.multas', 'm')
+            ->where('e.id = :id')
+            ->setParameter('id', $id);
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
 }

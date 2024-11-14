@@ -5,9 +5,12 @@ export interface Multa {
   id: number;
   jugador: Jugador | null;
   concepto: Concepto | null;
+  descripcion: string;
   precio: number | null;
+  precioPagado: number | null;
   pagada: boolean;
-  fechaPagada: string;
+  fecha: Date;
+  fechaPagada: Date;
 }
 
 export interface MultaApiSuccess {
@@ -25,9 +28,12 @@ export function createBlankMulta(): Multa {
     id: 0,
     jugador: null,
     concepto: null,
-    precio: 0,
+    precio: null,
+    precioPagado: null,
+    descripcion: "",
     pagada: false,
-    fechaPagada: "",
+    fecha: new Date(),
+    fechaPagada: new Date(),
   };
 }
 

@@ -1,4 +1,5 @@
 import type { Equipo } from "./equipoInterfaces";
+import type { Multa } from "./multaInterfaces";
 
 export interface Jugador {
   id: number;
@@ -18,6 +19,7 @@ export interface Jugador {
   dorsal: null | number;
   rol: "jugador" | "entrenador";
   image: any;
+  multas: Multa[];
 }
 
 export interface JugadorApiSuccess {

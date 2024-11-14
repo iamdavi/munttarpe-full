@@ -40,4 +40,23 @@ class MultaRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    /**
+     * Método para obtener las multas que están relacionadas a un equipo en 
+     * concreto
+     * 
+     * @param   int     $id     Id del Equipo::class del que obtener las multas
+     * 
+     * @return  array           Array de las Multas
+     */
+    public function getMultasByEquipo(int $id): array
+    {
+        $qb = $this->createQueryBuilder('m')
+            ->innerJoin('m.jugador', 'j')
+            ->innerJoin('j.equipo', 'e')
+            ->where('e.id = :id')
+            ->setParameter('id', $id);
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
 }

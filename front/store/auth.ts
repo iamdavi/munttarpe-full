@@ -26,7 +26,10 @@ export const useAuthStore = defineStore("auth", {
           const token = useCookie("token");
           token.value = res.token;
           this.token = res.token;
+          const refreshToken = useCookie('refreshToken')
+          refreshToken.value = res.refreshToken
           this.refreshToken = res.refreshToken;
+
           this.authenticated = true;
         }
       } catch (error) {

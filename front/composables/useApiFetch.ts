@@ -25,6 +25,7 @@ export async function $api<T>(
       error?.response?._data?.message === "Expired JWT Token"
     ) {
       try {
+        const refreshToken = useCookie("refreshToken");
         // Llama al endpoint de refresh token
         const refreshResponse = await $fetch<{ token: string }>(
           "/auth/refresh",
@@ -35,7 +36,7 @@ export async function $api<T>(
               "Content-Type": "application/json",
             },
             body: {
-              refreshToken: auth.refreshToken,
+              refreshToken: refreshToken.value,
             },
           }
         );

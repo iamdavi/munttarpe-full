@@ -1,5 +1,4 @@
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
-import { es } from "vuetify/lib/locale";
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
@@ -22,6 +21,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@nuxtjs/i18n",
   ],
+  plugins: ["~/plugins/dateFormatter.ts"],
   vite: {
     vue: {
       template: {
@@ -32,8 +32,8 @@ export default defineNuxtConfig({
   i18n: {
     // Lista de locales disponibles
     locales: [
-      { code: "eu", name: "Euskera", iso: "eu", file: "eu.json" },
-      { code: "es", name: "Español", iso: "es-ES", file: "es.json" },
+      { code: "eu", name: "Euskera", language: "eu", file: "eu.json" },
+      { code: "es", name: "Español", language: "es-ES", file: "es.json" },
     ],
     // Idioma predeterminado
     defaultLocale: "es",

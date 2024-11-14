@@ -5,6 +5,7 @@ import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { createVuetify } from "vuetify";
 import { VTimePicker } from "vuetify/labs/VTimePicker";
+import { VDateInput } from "vuetify/labs/VDateInput";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 import { es } from "vuetify/locale"; // Importa el idioma español
 
@@ -14,6 +15,7 @@ export default defineNuxtPlugin((app) => {
     components: {
       ...components,
       VTimePicker,
+      VDateInput,
     },
     directives,
     theme: {

@@ -18,15 +18,14 @@
         </template>
         <v-card-text class="pb-1">
           <v-select
-            v-model="form.jugador"
+            v-model="multa.jugador"
             label="Jugador *"
             variant="underlined"
-            :items="getJugadoresOfTeam()"
+            :items="jugadores"
             color="blue-grey-lighten-2"
-            item-title="nombre"
-            item-value="id"
+            item-text="nombre"
           >
-            <template v-slot:selection="{ props, item }">
+            <template v-slot:selection="{ item }">
               {{ item.raw.mote }}
               ({{ item.raw.dorsal ? item.raw.dorsal : "--" }})
             </template>
@@ -42,46 +41,31 @@
               </v-list-item>
             </template>
           </v-select>
-          <v-text-field
-            v-model="formattedDate"
-            @click="timeModal = true"
+          <v-date-input
+            v-model="multa.fecha"
+            clearable
+            label="Fecha de la multa"
             variant="underlined"
-            label="Día de la multa *"
-            prepend-icon="mdi-calendar-month-outline"
-            readonly
-          >
-            <v-dialog v-model="timeModal" activator="parent" width="auto">
-              <v-card>
-                <v-date-picker
-                  v-model="form.fecha"
-                  @update:modelValue="formatDate"
-                ></v-date-picker>
-                <v-card-actions>
-                  <v-btn block variant="outlined" @click="timeModal = false">
-                    Establecer fecha
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-text-field>
+            ok-text="Establecer"
+            cancel-text="Cancelar"
+          ></v-date-input>
           <v-select
-            v-model="form.concepto"
+            v-model="multa.concepto"
             label="Concepto *"
             variant="underlined"
-            :items="getConceptosMultasByTeam()"
+            :items="conceptos"
             color="blue-grey-lighten-2"
             hide-details
-            item-title="concepto"
-            item-value="id"
+            item-texto="texto"
             @update:modelValue="conceptoChangeEvent"
           >
-            <template v-slot:selection="{ props, item }">
-              {{ item.raw.concepto }} ({{ item.raw.valor }} &euro;)
+            <template v-slot:selection="{ item }">
+              {{ item.raw.texto }} ({{ item.raw.valor }} &euro;)
             </template>
             <template v-slot:item="{ props, item }">
               <v-list-item
                 v-bind="props"
-                :title="`${item.raw.concepto} (${item.raw.valor} &euro;)`"
+                :title="`${item.raw.texto} (${item.raw.valor} &euro;)`"
               >
               </v-list-item>
             </template>
@@ -89,9 +73,8 @@
           <v-text-field
             label="Cantidad a pagar *"
             class="mb-3 mt-2"
-            v-model="form.cantidad"
+            v-model="multa.precio"
             variant="underlined"
-            hint="En caso de decimales, usar coma, p.e.: 1,50"
             persistent-hint
           >
             <template v-slot:append-inner>
@@ -99,19 +82,34 @@
             </template>
           </v-text-field>
           <v-textarea
-            v-model="form.descripcion"
+            v-model="multa.descripcion"
             label="Descripción de la multa"
             variant="outlined"
           ></v-textarea>
           <v-checkbox
             label="Multa pagada"
-            v-model="form.pagado"
+            v-model="multa.pagada"
             color="green-darken-4"
             hide-details
           ></v-checkbox>
+          <v-expand-transition>
+            <v-text-field
+              v-if="multa.pagada"
+              label="Cantidad pagada *"
+              class="mb-3 mt-2"
+              v-model="multa.precioPagado"
+              variant="underlined"
+              hint="En caso de decimales, usar coma, p.e.: 1,50"
+              persistent-hint
+            >
+              <template v-slot:append-inner>
+                <v-icon icon="mdi-currency-eur" size="x-small"></v-icon>
+              </template>
+            </v-text-field>
+          </v-expand-transition>
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="closeDialog"> Cancelar </v-btn>
+          <v-btn @click="$emit('closeDialog')"> Cancelar </v-btn>
           <v-spacer></v-spacer>
           <v-btn type="submit" variant="outlined" color="green-darken-1">
             Guardar
@@ -124,23 +122,41 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from "vue";
-import { useDatabaseStore } from "@/stores/database";
 import { useMultaStore } from "~/store/multa";
+import { useJugadorStore } from "~/store/jugador";
+import { useConceptoStore } from "~/store/concepto";
+import type { Concepto } from "~/interfaces/conceptoInterfaces";
 
 const props = defineProps<{
   isOpen: boolean;
   action: "create" | "modify";
 }>();
 
-const { }
+const { multa } = storeToRefs(useMultaStore());
+const { jugadores } = storeToRefs(useJugadorStore());
+const { conceptos } = storeToRefs(useConceptoStore());
 
-const closeDialog = () => {};
+const { createMulta } = useMultaStore();
 
 const handleModalForm = () => {
-  //   multaStore.createMultaJugador(form.value);
-  //   clearFormFields();
-  //   closeDialog();
+  createMulta();
 };
+
+const conceptoChangeEvent = (e: Concepto) => {
+  const conceptoData = conceptos.value.find((m) => m.id == e.id);
+  multa.value.precio = conceptoData?.valor ? conceptoData.valor : null;
+  multa.value.precioPagado = conceptoData?.valor ? conceptoData.valor : null;
+  multa.value.descripcion = conceptoData?.valor ? conceptoData.texto : "";
+};
+
+watch(
+  () => multa.value.fecha,
+  (newValue: any) => {
+    if (newValue && !(newValue instanceof Date)) {
+      multa.value.fecha = new Date(newValue);
+    }
+  }
+);
 
 onMounted(() => {
   //   multaStore.getMultas();

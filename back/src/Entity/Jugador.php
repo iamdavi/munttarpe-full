@@ -203,7 +203,8 @@ class Jugador
             'posicion' => $this->getPosicion(),
             'dorsal' => $this->getDorsal(),
             'rol' => $this->getRol(),
-            'equipo' => $this->getEquipo()->serialize()
+            'equipo' => $this->getEquipo()->serialize(),
+            'multas' => $this->getMultas()->map(fn($m) => $m->serialize())->toArray()
         ];
     }
 }

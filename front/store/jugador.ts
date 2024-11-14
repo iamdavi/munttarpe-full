@@ -1,8 +1,10 @@
 import { defineStore } from "pinia";
+import type { Equipo } from "~/interfaces/equipoInterfaces";
 import type { JugadorResponse, Jugador } from "~/interfaces/jugadorInterfaces";
 
 export const useJugadorStore = defineStore("jugador", {
   state: () => ({
+    jugadoresEquipo: [] as Jugador[],
     jugadores: [] as Jugador[],
     jugador: {
       id: 0,
@@ -18,8 +20,15 @@ export const useJugadorStore = defineStore("jugador", {
   }),
   actions: {
     async getJugadores() {
-      if (this.jugadores.length !== 0) return;
-      const res: any = await $api("/jugador/list");
+      const res: JugadorResponse = await $api("/jugador/list");
+      if (Array.isArray(res)) {
+        this.jugadores = res;
+      }
+    },
+    async getJugadoresByEquipo(equipo: Equipo) {
+      const res: JugadorResponse = await $api("/jugador/list", {
+        params: { equipoId: equipo.id },
+      });
       if (Array.isArray(res)) {
         this.jugadores = res;
       }
@@ -75,6 +84,7 @@ export const useJugadorStore = defineStore("jugador", {
         posicion: "central",
         dorsal: null,
         rol: "jugador",
+        multas: [],
       };
     },
   },

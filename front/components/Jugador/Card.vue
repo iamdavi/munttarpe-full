@@ -56,13 +56,6 @@ const props = defineProps<Props>();
 const emit = defineEmits(["editJugadorData"]);
 const jugador = ref(props.jugador);
 
-watch(
-  () => props.jugador,
-  (newVal) => {
-    console.log("Nuevo valor :", newVal);
-  }
-);
-
 const editJugador = () => {
   emit("editJugadorData");
 };

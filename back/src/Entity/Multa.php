@@ -16,20 +16,29 @@ class Multa
 
     #[ORM\ManyToOne(inversedBy: 'multas')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?jugador $jugador = null;
+    private ?Jugador $jugador = null;
 
     #[ORM\ManyToOne(inversedBy: 'multas')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?concepto $concepto = null;
+    private ?Concepto $concepto = null;
 
     #[ORM\Column]
     private ?float $precio = null;
 
     #[ORM\Column]
+    private ?float $precioPagado = null;
+
+    #[ORM\Column]
     private ?bool $pagada = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $descripcion = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $fechaPagada = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $fecha = null;
 
     public function getId(): ?int
     {
@@ -94,5 +103,55 @@ class Multa
         $this->fechaPagada = $fechaPagada;
 
         return $this;
+    }
+
+    public function getFecha(): ?\DateTimeInterface
+    {
+        return $this->fecha;
+    }
+
+    public function setFecha(\DateTimeInterface $fecha): static
+    {
+        $this->fecha = $fecha;
+
+        return $this;
+    }
+
+    public function getPrecioPagado(): ?float
+    {
+        return $this->precioPagado;
+    }
+
+    public function setPrecioPagado(float $precioPagado): static
+    {
+        $this->precioPagado = $precioPagado;
+
+        return $this;
+    }
+
+    public function getDescripcion(): ?string
+    {
+        return $this->descripcion;
+    }
+
+    public function setDescripcion(string $descripcion): static
+    {
+        $this->descripcion = $descripcion;
+
+        return $this;
+    }
+
+    public function serialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'concepto' => $this->getConcepto()->serialize(),
+            'precio' => $this->getPrecio(),
+            'precioPagado' => $this->getPrecioPagado(),
+            'pagada' => $this->isPagada(),
+            'descripcion' => $this->getDescripcion(),
+            'fechaPagada' => $this->getFechaPagada(),
+            'fecha' => $this->getFecha(),
+        ];
     }
 }

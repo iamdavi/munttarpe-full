@@ -2,16 +2,19 @@
 
 namespace App\Controller;
 
-use App\Entity\Jugador;
+use DateTime;
+use App\Entity\Concepto;
 use App\Entity\Equipo;
+use App\Entity\Jugador;
+use App\Entity\Multa;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-#[Route('/api/jugador', name: "api_jugador_")]
-class JugadorController extends AbstractController
+#[Route('/api/multa', name: "api_multa_")]
+class MultaController extends AbstractController
 {
     private EntityManagerInterface $em;
 
@@ -24,14 +27,9 @@ class JugadorController extends AbstractController
     public function list(Request $request): JsonResponse
     {
         $equipoId = $request->query->get('equipoId');
-        $jugadorRepository = $this->em->getRepository(Jugador::class);
-        $jugadoresData = $equipoId
-            ? $jugadorRepository->findBy(['equipo' => $equipoId])
-            : $jugadorRepository->findAll();
-        $jugadores = array_map(
-            fn(Jugador $jugador) => $jugador->serialize(),
-            $jugadoresData
-        );
+        $jugadoresData = $this->em->getRepository(Jugador::class)
+            ->getJugadoresWithMultasByEquipo($equipoId);
+        $jugadores = array_map(fn(Jugador $jugador) => $jugador->serialize(), $jugadoresData);
         return new JsonResponse($jugadores);
     }
 
@@ -40,19 +38,24 @@ class JugadorController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $equipo = $this->em->getRepository(Equipo::class)->find($data['equipo']['id']);
+        $jugador = $this->em->getRepository(Jugador::class)->find($data['jugador']['id']);
+        $concepto = $this->em->getRepository(Concepto::class)->find($data['concepto']['id']);
 
-        $jugador = new Jugador();
-        $jugador->setNombre($data['nombre']);
-        $jugador->setApellidos($data['apellidos']);
-        $jugador->setMote($data['mote']);
-        $jugador->setPosicion($data['posicion']);
-        $jugador->setDorsal($data['dorsal']);
-        $jugador->setRol($data['rol']);
-        $jugador->setEquipo($equipo);
+        $fechaPagada = new DateTime($data['fechaPagada']);
+        $fecha = new DateTime($data['fecha']);
+
+        $multa = new Multa();
+        $multa->setJugador($jugador);
+        $multa->setConcepto($concepto);
+        $multa->setPrecio($data['precio']);
+        $multa->setPrecioPagado($data['precioPagado']);
+        $multa->setPagada($data['pagada']);
+        $multa->setDescripcion($data['descripcion']);
+        $multa->setFechaPagada($fechaPagada);
+        $multa->setFecha($fecha);
 
         try {
-            $this->em->persist($jugador);
+            $this->em->persist($multa);
             $this->em->flush();
         } catch (\Throwable $th) {
             return new JsonResponse([
@@ -63,18 +66,18 @@ class JugadorController extends AbstractController
 
         return new JsonResponse([
             'status' => 'success',
-            'jugador' => $jugador->serialize()
+            'equipo' => $multa->serialize()
         ]);
     }
 
     #[Route('/edit/{id}', name: 'edit', methods: ['POST'])]
-    public function edit(Request $request, Jugador $jugador): JsonResponse
+    public function edit(Request $request, Equipo $equipo): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         foreach ($data as $field => $value) {
-            $setter = Jugador::MAPPED_PROPERTIES_METHODS[$field] ?? false;
+            $setter = Equipo::MAPPED_PROPERTIES_METHODS[$field] ?? false;
             if (!$setter) continue;
-            $jugador->{$setter}($value);
+            $equipo->{$setter}($value);
         }
 
         try {
@@ -88,15 +91,15 @@ class JugadorController extends AbstractController
 
         return new JsonResponse([
             'status' => 'success',
-            'equipo' => $jugador->serialize()
+            'equipo' => $equipo->serialize()
         ]);
     }
 
     #[Route('/delete/{id}', name: 'delete', methods: ['DELETE'])]
-    public function delete(Request $request, Jugador $jugador): JsonResponse
+    public function delete(Request $request, Equipo $equipo): JsonResponse
     {
         try {
-            $this->em->remove($jugador);
+            $this->em->remove($equipo);
             $this->em->flush();
         } catch (\Throwable $th) {
             return new JsonResponse([
@@ -107,7 +110,7 @@ class JugadorController extends AbstractController
 
         return new JsonResponse([
             'status' => 'success',
-            'msg' => 'Jugador eliminado'
+            'msg' => 'Equipo eliminado'
         ]);
     }
 }

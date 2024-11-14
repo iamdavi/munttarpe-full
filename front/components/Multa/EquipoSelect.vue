@@ -32,19 +32,28 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useEquipoStore } from "~/store/equipo";
+import { useJugadorStore } from "~/store/jugador";
 import { useConceptoStore } from "~/store/concepto";
+import { useMultaStore } from "~/store/multa";
 import { type Equipo } from "~/interfaces/equipoInterfaces";
 
-const { equipos } = storeToRefs(useEquipoStore());
+const { equipos, equipo } = storeToRefs(useEquipoStore());
 const { concepto } = storeToRefs(useConceptoStore());
 const { getConceptos } = useConceptoStore();
+const { getJugadoresByEquipo } = useJugadorStore();
+const { getMultas } = useMultaStore();
 
-const equipoSelected = ref<Equipo | null>(null);
+const equipoSelected = ref<Equipo>();
 
 const equipoChangeEvent = () => {
   concepto.value.texto = "";
   concepto.value.valor = null;
-  concepto.value.equipo = equipoSelected.value;
+  if (equipoSelected.value) {
+    concepto.value.equipo = equipoSelected.value;
+    equipo.value = equipoSelected.value;
+  }
+  getJugadoresByEquipo(equipo.value);
+  getMultas(equipo.value);
   getConceptos();
 };
 </script>
