@@ -32,19 +32,6 @@
         </v-col>
       </v-row>
     </v-col>
-    <v-col
-      cols="12"
-      md="6"
-      lg="4"
-      v-for="jugadorMultas in jugadoresMultas"
-      :key="jugadorMultas.id"
-    >
-      <MultaJugadorList
-        v-if="jugadoresMultas.length"
-        :jugador="jugadorMultas"
-      />
-    </v-col>
-
     <v-col cols="12" md="8" v-if="!concepto.equipo || !jugadoresMultas.length">
       <div class="text-center">
         <v-img
@@ -78,6 +65,65 @@
         </div>
       </div>
     </v-col>
+    <v-col cols="12" md="8" v-else>
+      <v-row>
+        <v-col cols="12">
+          <v-btn-toggle
+            v-model="onlyPendientes"
+            density="compact"
+            class="w-100"
+          >
+            <v-btn width="50%" icon="mdi-format-align-left" :value="true">
+              <v-icon start>mdi-invoice-clock-outline</v-icon>
+              Ver pendientes
+            </v-btn>
+            <v-btn width="50%" icon="mdi-format-align-justify" :value="false">
+              Ver todas
+              <v-icon end>mdi-invoice-text-multiple-outline</v-icon>
+            </v-btn>
+          </v-btn-toggle>
+        </v-col>
+        <v-col
+          cols="12"
+          md="6"
+          lg="4"
+          v-for="jugadorMultas in jugadoresMultas"
+          :key="jugadorMultas.id"
+        >
+          <MultaJugadorList
+            v-if="jugadoresMultas.length"
+            :jugador="jugadorMultas"
+          />
+        </v-col>
+        <v-col cols="12">
+          <v-expand-transition>
+            <v-row v-if="selectedMultas.length != 0">
+              <v-col>
+                <v-btn
+                  @click="multasSeleccionadasAction('eliminar')"
+                  variant="outlined"
+                  color="red-darken-4"
+                  prepend-icon="mdi-trash-can-outline"
+                  block
+                >
+                  Eliminar
+                </v-btn>
+              </v-col>
+              <v-col>
+                <v-btn
+                  @click="multasSeleccionadasAction('pagar')"
+                  color="green-darken-4"
+                  prepend-icon="mdi-hand-coin-outline"
+                  block
+                >
+                  Pagar
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-expand-transition>
+        </v-col>
+      </v-row>
+    </v-col>
   </v-row>
   <MultaModal :isOpen="open" :action="action" @closeDialog="open = false" />
 </template>
@@ -90,10 +136,21 @@ import { useConceptoStore } from "~/store/concepto";
 
 const { getEquipos } = useEquipoStore();
 const { concepto } = storeToRefs(useConceptoStore());
-const { multas, jugadoresMultas } = storeToRefs(useMultaStore());
+const { deleteMultas, pagarMultas } = useMultaStore();
+const { selectedMultas, jugadoresMultas, onlyPendientes } = storeToRefs(
+  useMultaStore()
+);
 
 const action = ref<"create" | "modify">("create");
 const open = ref<boolean>(false);
+
+const multasSeleccionadasAction = (action: "pagar" | "eliminar") => {
+  if (action == "eliminar") {
+    deleteMultas();
+  } else {
+    pagarMultas();
+  }
+};
 
 const crearEvent = () => {
   action.value = "create";

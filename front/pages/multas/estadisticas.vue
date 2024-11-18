@@ -9,4 +9,26 @@
       </div>
     </v-col>
   </v-row>
+  <v-row>
+    <v-col cols="12" md="4">
+      <v-row>
+        <v-col cols="12">
+          <MultaEquipoSelect />
+        </v-col>
+      </v-row>
+    </v-col>
+    <v-col cols="12" md="8">
+      <MultaChartDoughnut />
+    </v-col>
+  </v-row>
 </template>
+
+<script setup lang="ts">
+import { useEquipoStore } from "~/store/equipo";
+
+const { getEquipos } = useEquipoStore();
+
+onMounted(() => {
+  getEquipos();
+});
+</script>

@@ -95,11 +95,21 @@ class MultaController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{id}', name: 'delete', methods: ['DELETE'])]
-    public function delete(Request $request, Equipo $equipo): JsonResponse
+    #[Route('/pagar', name: 'pagar', methods: ['POST'])]
+    public function pagar(Request $request): JsonResponse
     {
+        $data = json_decode($request->getContent(), true);
+
+        if (!isset($data['ids']) || !is_array($data['ids'])) {
+            return new JsonResponse(['error' => 'Invalid data'], 400);
+        }
+
+        $multas = $this->em->getRepository(Multa::class)->findBy(['id' => $data['ids']]);
+
         try {
-            $this->em->remove($equipo);
+            foreach ($multas as $multa) {
+                $multa->setPagada(true);
+            }
             $this->em->flush();
         } catch (\Throwable $th) {
             return new JsonResponse([
@@ -110,7 +120,36 @@ class MultaController extends AbstractController
 
         return new JsonResponse([
             'status' => 'success',
-            'msg' => 'Equipo eliminado'
+            'msg' => 'Multas pagadas'
+        ]);
+    }
+
+    #[Route('/delete', name: 'delete', methods: ['POST'])]
+    public function delete(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (!isset($data['ids']) || !is_array($data['ids'])) {
+            return new JsonResponse(['error' => 'Invalid data'], 400);
+        }
+
+        $multas = $this->em->getRepository(Multa::class)->findBy(['id' => $data['ids']]);
+
+        try {
+            foreach ($multas as $multa) {
+                $this->em->remove($multa);
+            }
+            $this->em->flush();
+        } catch (\Throwable $th) {
+            return new JsonResponse([
+                'status' => 'error',
+                'msg' => (string) $th
+            ]);
+        }
+
+        return new JsonResponse([
+            'status' => 'success',
+            'msg' => 'Multas eliminadas'
         ]);
     }
 }

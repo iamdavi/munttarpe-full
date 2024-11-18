@@ -9,17 +9,50 @@ export const useMultaStore = defineStore("multa", {
   state: () => ({
     multa: createBlankMulta() as Multa,
     multas: [] as Multa[],
+    onlyPendientes: true,
+    selectedMultas: [] as Number[],
     jugadoresMultas: [] as Jugador[],
   }),
   actions: {
     async getMultas(equipo: Equipo) {
-      console.log(equipo);
       const res: JugadorResponse = await $api("/multa/list", {
         params: { equipoId: equipo.id },
       });
       if (Array.isArray(res)) {
-        console.log(res);
         this.jugadoresMultas = res;
+      }
+    },
+    async pagarMultas() {
+      const res: JugadorResponse = await $api(`/multa/pagar`, {
+        method: "post",
+        body: { ids: this.selectedMultas },
+      });
+      if (res.status == "success") {
+        this.jugadoresMultas = this.jugadoresMultas.map((j) => {
+          j.multas = j.multas.map((m) => {
+            m.pagada = this.selectedMultas.includes(m.id);
+            return m;
+          });
+          return j;
+        });
+        this.selectedMultas = [];
+      } else {
+      }
+    },
+    async deleteMultas() {
+      const res: JugadorResponse = await $api(`/multa/delete`, {
+        method: "post",
+        body: { ids: this.selectedMultas },
+      });
+      if (res.status == "success") {
+        this.jugadoresMultas = this.jugadoresMultas.map((j) => {
+          j.multas = j.multas.filter(
+            (m) => !this.selectedMultas.includes(m.id)
+          );
+          return j;
+        });
+        this.selectedMultas = [];
+      } else {
       }
     },
     async createMulta() {
