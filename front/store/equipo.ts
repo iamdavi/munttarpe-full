@@ -9,6 +9,7 @@ export const useEquipoStore = defineStore("equipo", {
   state: () => ({
     equipos: [] as Equipo[],
     equipo: createBlankEquipo() as Equipo,
+    equipoSelected: null as Equipo | null,
   }),
   actions: {
     async getEquipos() {

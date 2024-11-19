@@ -137,9 +137,11 @@ const { jugadores } = storeToRefs(useJugadorStore());
 const { conceptos } = storeToRefs(useConceptoStore());
 
 const { createMulta } = useMultaStore();
+const emits = defineEmits(["closeDialog"]);
 
 const handleModalForm = () => {
   createMulta();
+  emits("closeDialog");
 };
 
 const conceptoChangeEvent = (e: Concepto) => {

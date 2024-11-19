@@ -18,7 +18,7 @@
     <v-card-text class="pb-0">
       <v-list lines="one" bg-color="transparent" nav class="pa-0">
         <div v-for="multa in props.jugador.multas" :key="multa.id">
-          <v-list-item>
+          <v-list-item v-if="multa.pagada == props.showPagadas">
             <template v-slot:prepend="{ isActive }">
               <v-list-item-action start>
                 <v-checkbox
@@ -56,13 +56,16 @@ import type { Jugador } from "~/interfaces/jugadorInterfaces";
 import type { Multa } from "~/interfaces/multaInterfaces";
 import { useMultaStore } from "~/store/multa";
 
-const props = defineProps<{ jugador: Jugador }>();
-const { selectedMultas, onlyPendientes } = storeToRefs(useMultaStore());
+const props = defineProps<{
+  jugador: Jugador;
+  showPagadas: Boolean;
+}>();
+const { selectedMultas } = storeToRefs(useMultaStore());
 
 const totalPagoJugador = (multas: Multa[]) => {
   let result = 0;
   multas.map((m: Multa) => {
-    if (m.pagada) return;
+    if (m.pagada != props.showPagadas) return;
     result = m.precio ? result + m.precio : result;
   });
   return result.toFixed(2);

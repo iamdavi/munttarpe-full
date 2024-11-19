@@ -35,24 +35,21 @@ import { useEquipoStore } from "~/store/equipo";
 import { useJugadorStore } from "~/store/jugador";
 import { useConceptoStore } from "~/store/concepto";
 import { useMultaStore } from "~/store/multa";
-import { type Equipo } from "~/interfaces/equipoInterfaces";
 
-const { equipos, equipo } = storeToRefs(useEquipoStore());
+const { equipos, equipo, equipoSelected } = storeToRefs(useEquipoStore());
 const { concepto } = storeToRefs(useConceptoStore());
 const { getConceptos } = useConceptoStore();
 const { getJugadoresByEquipo } = useJugadorStore();
 const { getMultas } = useMultaStore();
 
-const equipoSelected = ref<Equipo>();
-
-const equipoChangeEvent = () => {
+const equipoChangeEvent = async () => {
   concepto.value.texto = "";
   concepto.value.valor = null;
   if (equipoSelected.value) {
     concepto.value.equipo = equipoSelected.value;
     equipo.value = equipoSelected.value;
   }
-  getJugadoresByEquipo(equipo.value);
+  await getJugadoresByEquipo(equipo.value);
   getMultas(equipo.value);
   getConceptos();
 };

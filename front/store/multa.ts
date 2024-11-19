@@ -9,7 +9,6 @@ export const useMultaStore = defineStore("multa", {
   state: () => ({
     multa: createBlankMulta() as Multa,
     multas: [] as Multa[],
-    onlyPendientes: true,
     selectedMultas: [] as Number[],
     jugadoresMultas: [] as Jugador[],
   }),
@@ -30,7 +29,9 @@ export const useMultaStore = defineStore("multa", {
       if (res.status == "success") {
         this.jugadoresMultas = this.jugadoresMultas.map((j) => {
           j.multas = j.multas.map((m) => {
-            m.pagada = this.selectedMultas.includes(m.id);
+            if (this.selectedMultas.includes(m.id)) {
+              m.pagada = true;
+            }
             return m;
           });
           return j;

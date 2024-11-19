@@ -295,3 +295,7 @@
     height: 18px;
     width: 18px;
 }
+
+.show-all-text {
+    white-space: break-spaces;
+}

@@ -20,14 +20,14 @@
               <strong class="me-2">{{ i + 1 }}.</strong>
             </template>
 
-            <v-list-item-title
-              class="d-flex justify-space-between align-center"
+            <v-list-item-subtitle
+              class="d-flex justify-space-between align-center opacity-100"
             >
               <div class="text-body-1">
                 {{ concepto.texto }}
               </div>
               <div class="d-flex align-center">
-                <span>
+                <span class="d-flex">
                   {{ concepto.valor }}
                   <v-icon icon="mdi-currency-eur" size="small"></v-icon>
                 </span>
@@ -41,7 +41,7 @@
                   @click="deleteConcepto(concepto.id)"
                 ></v-btn>
               </div>
-            </v-list-item-title>
+            </v-list-item-subtitle>
           </v-list-item>
           <v-list-item v-if="conceptos.length == 0" class="text-center">
             <v-list-item-title>

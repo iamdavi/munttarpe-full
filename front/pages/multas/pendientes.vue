@@ -32,14 +32,21 @@
         </v-col>
       </v-row>
     </v-col>
-    <v-col cols="12" md="8" v-if="!concepto.equipo || !jugadoresMultas.length">
+    <v-col
+      cols="12"
+      md="8"
+      v-if="
+        !concepto.equipo ||
+        !jugadoresMultas.some((j) => j.multas.some((m) => !m.pagada))
+      "
+    >
       <div class="text-center">
         <v-img
           class="ma-auto"
           aspect-ratio="16/9"
           width="300"
           position="top"
-          src="/img/empty_state/multas_equipo.svg"
+          src="@/assets/img/empty_state/multas_equipo.svg"
           cover
         />
         <div v-if="!concepto.equipo">
@@ -47,9 +54,14 @@
             <i> ~ Selecciona un equipo para cargar los datos ~ </i>
           </p>
         </div>
-        <div v-if="concepto.equipo && !jugadoresMultas.length">
+        <div
+          v-if="
+            concepto.equipo &&
+            !jugadoresMultas.some((j) => j.multas.some((m) => !m.pagada))
+          "
+        >
           <p class="text-subtitle-2 font-italic mt-3">
-            <i> ~ Prueba a crear tu primera multa ~ </i>
+            <i> ~ No hay multas pendientes ~ </i>
           </p>
           <p class="d-flex justify-center mt-3">
             <v-btn
@@ -59,7 +71,7 @@
               variant="outlined"
               @click="crearEvent"
             >
-              Crear primera multa
+              Crear multa
             </v-btn>
           </p>
         </div>
@@ -67,22 +79,6 @@
     </v-col>
     <v-col cols="12" md="8" v-else>
       <v-row>
-        <v-col cols="12">
-          <v-btn-toggle
-            v-model="onlyPendientes"
-            density="compact"
-            class="w-100"
-          >
-            <v-btn width="50%" icon="mdi-format-align-left" :value="true">
-              <v-icon start>mdi-invoice-clock-outline</v-icon>
-              Ver pendientes
-            </v-btn>
-            <v-btn width="50%" icon="mdi-format-align-justify" :value="false">
-              Ver todas
-              <v-icon end>mdi-invoice-text-multiple-outline</v-icon>
-            </v-btn>
-          </v-btn-toggle>
-        </v-col>
         <v-col
           cols="12"
           md="6"
@@ -91,8 +87,9 @@
           :key="jugadorMultas.id"
         >
           <MultaJugadorList
-            v-if="jugadoresMultas.length"
+            v-if="jugadorMultas.multas.some((m) => !m.pagada)"
             :jugador="jugadorMultas"
+            :showPagadas="false"
           />
         </v-col>
         <v-col cols="12">
@@ -137,9 +134,7 @@ import { useConceptoStore } from "~/store/concepto";
 const { getEquipos } = useEquipoStore();
 const { concepto } = storeToRefs(useConceptoStore());
 const { deleteMultas, pagarMultas } = useMultaStore();
-const { selectedMultas, jugadoresMultas, onlyPendientes } = storeToRefs(
-  useMultaStore()
-);
+const { selectedMultas, jugadoresMultas } = storeToRefs(useMultaStore());
 
 const action = ref<"create" | "modify">("create");
 const open = ref<boolean>(false);
@@ -159,5 +154,9 @@ const crearEvent = () => {
 
 onMounted(() => {
   getEquipos();
+});
+
+onBeforeUnmount(() => {
+  selectedMultas.value = [];
 });
 </script>
