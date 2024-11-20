@@ -1,6 +1,6 @@
 <template>
   <Doughnut ref="doughnutChart" :data="chartData" :options="chartOptions" />
-  <v-btn @click="getPorcentajeJugadoresData">a</v-btn>
+  <v-btn @click="getPorcentajeJugadoresData"></v-btn>
 </template>
 
 <script setup lang="ts">
@@ -66,10 +66,11 @@ const getPorcentajeJugadoresData = () => {
     datasetData.push(e.total);
   });
 
-  chartData.labels = [...labels];
-  chartData.datasets[0].data = [...datasetData];
-  console.log(chartInstance.value?.data);
   if (chartInstance.value) {
+    chartData.labels = [...labels];
+    chartData.datasets[0].data = [...datasetData];
+    // chartInstance.value.data.labels = [...labels];
+    // chartInstance.value.data.datasets[0].data = [...datasetData];
     chartInstance.value.update();
   }
 };
@@ -93,8 +94,6 @@ onMounted(async () => {
   if (doughnutChart.value) {
     chartInstance.value = doughnutChart.value.chart;
   }
-  if (props.type == "porcentajeJugadores") {
-    // getPorcentajeJugadoresData();
-  }
+  getPorcentajeJugadoresData();
 });
 </script>

@@ -157,6 +157,12 @@ const items = [
     link: "/calendario",
     icon: "mdi-calendar-multiselect",
   },
+  {
+    title: "Partidos",
+    value: "partidos",
+    link: "/partidos",
+    icon: "mdi-trophy-outline",
+  },
 ];
 
 const multasItems = [

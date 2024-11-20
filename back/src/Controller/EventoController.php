@@ -37,7 +37,7 @@ class EventoController extends AbstractController
         $equiposIds = array_map(fn(array $e) => $e['id'], $data['equipos']);
         $equipos = $this->em->getRepository(Equipo::class)->getEquiposByArrayIds($equiposIds);
 
-        $fecha = new DateTime($data['fecha']);
+        $fecha = DateTime::createFromFormat('d/m/Y', $data['fecha']);
         $hora = new DateTime($data['hora']);
 
         $evento = new Evento();
